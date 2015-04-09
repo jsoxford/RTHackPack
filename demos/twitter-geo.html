@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RTHackPack</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <style type="text/css">
+      .well{
+        max-height: 400px;
+        overflow: scroll;
+      }
+      .pre{
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>
+          <a href="../">RTHackPack</a>
+          <small>twitter-user</small>
+        </h1>
+      </div>
+
+      <p class="lead">
+        [About this data…]
+      </p>
+
+      <hr />
+
+      <h3>Tweets</h3>
+      <div class="well">
+        <h4 id="text"></h4>
+        <hr />
+        <h3 id="place"></h3>
+        <h3 id="coord"></h3>
+        <hr />
+        <code id="data" class="pre"></code>
+      </div>
+
+    </div>
+
+
+
+    <script src="https://js.pusher.com/2.2/pusher.min.js"></script>
+    <script type="text/javascript">
+      var pusher = new Pusher('e90170eabd1af4f8e8fc');
+
+      var channel = pusher.subscribe('twitter-geo');
+
+      channel.bind('tweet', function(message) {
+        data.textContent = JSON.stringify(message, null, 2);
+
+        text.textContent = message.text;
+
+        place.textContent = message.place.name || '...';
+
+        // {"type":"Point","coordinates":[_, _]}
+        if(message.coordinates && message.coordinates.coordinates)
+          coord.textContent = JSON.stringify(message.coordinates.coordinates)
+        else
+          coord.textContent = '...';
+
+      });
+
+    </script>
+
+  </body>
+</html>
