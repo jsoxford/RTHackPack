@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RTHackPack</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <style type="text/css">
+      .well{
+        max-height: 400px;
+        overflow: scroll;
+      }
+      .pre{
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>
+          <a href="../">RTHackPack</a>
+          <small>twitter-user</small>
+        </h1>
+      </div>
+
+      <p class="lead">
+        [About this data…]
+      </p>
+
+      <hr />
+
+
+      <h3>Events</h3>
+
+      <div class="jumbotron">
+        <h1 id="eventname"></h1>
+        <h3 id="timestamp"></h3>
+        <h3 id="direction"></h3>
+      </div>
+
+      <h3>Full Data</h3>
+      <div class="well">
+        <code id="data" class="pre"></code>
+      </div>
+
+    </div>
+
+
+
+    <script src="https://js.pusher.com/2.2/pusher.min.js"></script>
+    <script type="text/javascript">
+      var pusher = new Pusher('e90170eabd1af4f8e8fc');
+
+      var channel = pusher.subscribe('twitter-user');
+
+      channel.bind('data', function(message) {
+        data.textContent = JSON.stringify(message, null, 2);
+      });
+
+      // user Events
+      // https://dev.twitter.com/streaming/overview/messages-types#Events_event
+      ["access_revoked", "block", "unblock", "favorite", "favorite", 
+       "unfavorite", "unfavorite", "follow", "follow", "unfollow", 
+       "list_created", "list_destroyed", "list_updated", "list_member_added", 
+       "list_member_added", "list_member_removed", "list_member_removed", 
+       "list_user_subscribed", "list_user_subscribed", "list_user_unsubscribed", 
+       "list_user_unsubscribed", "user_update", "user_update"]
+      .forEach(function(name){
+
+        channel.bind(name, function(data) {
+          eventname.textContent = name;
+          timestamp.textContent = data.created_at;
+
+          direction.textContent = data.source.screen_name + " >> " + data.target.screen_name
+          
+        })
+      })
+
+    </script>
+
+  </body>
+</html>
