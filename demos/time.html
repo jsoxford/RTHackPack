@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RTHackPack</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>
+          <a href="/">RTHackPack</a>
+          <small>time</small>
+        </h1>
+      </div>
+
+      <p class="lead">
+        The time is sent from the server every 10 seconds 
+        - <a href="https://github.com/jsoxford/RTData/blob/master/time.js">server source</a>
+      </p>
+
+      <div class="jumbotron">
+        <h1 id="formatted">&hellip;</h1>
+        <h3 id="timestamp"></h3>
+      </div>
+
+      <div class="well">
+        <code id="full" style="white-space:pre"></code>
+      </div>
+
+    </div>
+
+
+    <script src="https://js.pusher.com/2.2/pusher.min.js"></script>
+    <script type="text/javascript">
+      var pusher = new Pusher('e90170eabd1af4f8e8fc');
+
+      var channel = pusher.subscribe('time');
+
+      channel.bind('tick', function(data) {
+        formatted.textContent = data.formatted;
+        timestamp.textContent = data.timestamp;
+
+        full.textContent = JSON.stringify(data, null, 2);
+      });
+    </script>
+
+  </body>
+</html>
