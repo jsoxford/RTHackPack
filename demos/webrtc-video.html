@@ -24,6 +24,7 @@
       <!-- Video area -->
       <div class="row">
         <div class="col-sm-9" id="video-container">
+          <h5>Their id: <span id="their-id"></span></h5>
           <video id="their-video" autoplay width="100%"></video>
         </div>
         <div class="col-sm-3">
@@ -71,8 +72,7 @@
             $('#my-video').prop('src', URL.createObjectURL(stream));
 
             window.localStream = stream;
-            step2();
-          }, function(){ $('#step1-error').show(); });
+          }, function(){ console.log('sad times'); });
 
           // Click handlers setup
           $(function(){
@@ -85,8 +85,8 @@
 
           function setupCall(call){
             // Hang up on an existing call if present
-            if (call) {
-              call.close();
+            if (window.existingCall) {
+              window.existingCall.close();
             }
 
             // Wait for stream on the call, then set peer video display
@@ -95,6 +95,7 @@
             });
             $('#their-id').text(call.peer);
             $('#hangup').show();
+            window.existingCall = call;
           };
 
           $('#hangup').hide();
