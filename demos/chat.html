@@ -58,6 +58,7 @@
         });
 
         pubnub.subscribe({
+          //backfill: true,
           channel: 'rthack_chat',
           message: function(data){
             var chat = document.createElement("li");

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RTHackPack</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>
+          <a href="../">RTHackPack</a>
+          <small>WebRTC video</small>
+        </h1>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          You'll need to run this as a service to get video and audio working. Try firing up <code>python -m SimpleHTTPServer</code> and you'll be able to view your work at http://localhost:8000/
+        </div>
+      </div>
+
+      <!-- Video area -->
+      <div class="row">
+        <div class="col-sm-9" id="video-container">
+          <video id="their-video" autoplay width="100%"></video>
+        </div>
+        <div class="col-sm-3">
+          <video id="my-video" muted="true" width="100%" autoplay></video>
+          <h2>PeerJS Video Chat</h2>
+          <p>Your id: <span id="my-id">...</span></p>
+          <p>Share this id with others so they can call you.</p>
+          <h3>Make a call</h3>
+          <form>
+            <div class="form-group">
+              <input type="text" placeholder="Call user id..." id="callto-id">
+              <a href="#" class="pure-button pure-button-success" id="make-call">Call</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+    <script type="text/javascript">
+      // Based on https://github.com/peers/peerjs/blob/master/examples/videochat/index.html
+      // Compatibility shim
+          navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+          // PeerJS object
+          var peer = new Peer({ key: 'yid9qhatyt84obt9', debug: 3});
+
+          peer.on('open', function(){
+            $('#my-id').text(peer.id);
+          });
+
+          // Receiving a call
+          peer.on('call', function(call){
+            // Answer the call automatically (instead of prompting user) for demo purposes
+            call.answer(window.localStream);
+            setupCall(call);
+          });
+          peer.on('error', function(err){
+            alert(err.message);
+          });
+
+          navigator.getUserMedia({audio: true, video: true}, function(stream){
+            // Set your video displays
+            $('#my-video').prop('src', URL.createObjectURL(stream));
+
+            window.localStream = stream;
+            step2();
+          }, function(){ $('#step1-error').show(); });
+
+          // Click handlers setup
+          $(function(){
+            $('#make-call').click(function(){
+              // Initiate a call!
+              var call = peer.call($('#callto-id').val(), window.localStream);
+              setupCall(call);
+            });
+          });
+
+          function setupCall(call){
+            // Hang up on an existing call if present
+            if (call) {
+              call.close();
+            }
+
+            // Wait for stream on the call, then set peer video display
+            call.on('stream', function(stream){
+              $('#their-video').prop('src', URL.createObjectURL(stream));
+            });
+            $('#their-id').text(call.peer);
+            $('#hangup').show();
+          };
+
+          $('#hangup').hide();
+
+
+    </script>
+
+  </body>
+</html>
