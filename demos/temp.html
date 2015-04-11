@@ -68,6 +68,9 @@
       channel.bind('temp', function(data) {
         temp.textContent = JSON.stringify(data, null, 2);
         if(data.temperature){
+          if(tempData.length > 30){
+            tempData.splice(0,1);
+          }
           tempData.push(data);
           updateData();
         }
@@ -86,7 +89,7 @@
       
       // Set the dimensions of the canvas / graph
       var margin = {top: 30, right: 20, bottom: 30, left: 50},
-          width = 600 - margin.left - margin.right,
+          width = 900 - margin.left - margin.right,
           height = 270 - margin.top - margin.bottom;
 
       // Set the ranges
@@ -140,24 +143,24 @@
               d.timestamp = new Date(d.timestamp);
               d.temperature = +d.temperature;
             });
+    
+        // Scale the range of the data again 
+        x.domain(d3.extent(tempData, function(d) { return d.timestamp; }));
+        y.domain([d3.min(tempData, function(d) { return d.temperature; }), d3.max(tempData, function(d) { return d.temperature; })]);
 
-            // Scale the range of the data again 
-            x.domain(d3.extent(tempData, function(d) { return d.timestamp; }));
-            y.domain([0, d3.max(tempData, function(d) { return d.temperature; })]);
+      // Select the section we want to apply our changes to
+      var svg = d3.select("#graph").transition();
 
-          // Select the section we want to apply our changes to
-          var svg = d3.select("#graph").transition();
-
-          // Make the changes
-              svg.select(".line")   // change the line
-                  .duration(750)
-                  .attr("d", valueline(tempData));
-              svg.select(".x.axis") // change the x axis
-                  .duration(750)
-                  .call(xAxis);
-              svg.select(".y.axis") // change the y axis
-                  .duration(750)
-                  .call(yAxis);
+      // Make the changes
+          svg.select(".line")   // change the line
+              .duration(750)
+              .attr("d", valueline(tempData));
+          svg.select(".x.axis") // change the x axis
+              .duration(750)
+              .call(xAxis);
+          svg.select(".y.axis") // change the y axis
+              .duration(750)
+              .call(yAxis);
 
       }
 
