@@ -22,11 +22,6 @@
 
       <h3>Events</h3>
 
-      <div class="jumbotron">
-        <h1 id="formatted">&hellip;</h1>
-        <h3 id="timestamp"></h3>
-      </div>
-
       <h3>Full Data</h3>
       <div class="well">
         <code id="full" class="pre"></code>
@@ -42,9 +37,6 @@
       var channel = pusher.subscribe('github');
 
       channel.bind('org-event', function(data) {
-        formatted.textContent = data.formatted;
-        timestamp.textContent = data.timestamp;
-
         full.textContent = JSON.stringify(data, null, 2);
       });
     </script>
